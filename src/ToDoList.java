@@ -1,3 +1,11 @@
+/*------------------------------------------------------
+My name: Matthew Archer
+My subject code: CSIT111
+My student number: 6093887
+My email address: ma674@uow.edu.au
+Assignment number: 3
+-------------------------------------------------------*/
+
 import java.util.ArrayList;
 
 class ToDoList {
