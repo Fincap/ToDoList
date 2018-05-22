@@ -27,7 +27,7 @@ class ToDoList {
 			sortedList[i] = this.list.get(i);
 		}
 
-		//Perform a bubble sort of the new 1-D list
+		//Perform a bubble sort of the new 1-D list TODO bubble fix
 		Task temp;
 		for (int i = 0; i < sortedList.length; i++) {
 			for (int j = 1; j < (sortedList.length - i); j++) {
@@ -50,9 +50,10 @@ class ToDoList {
 
 	public void deleteTask(int taskID) {
 		//For each task in the task list, check if the ID given is equal to the task's ID. If it is, remove that task from the list
-		for (Task task : this.list) {
-			if (task.getTaskID() == taskID) {
-				this.list.remove(task);
+		//Note, it doesn't use a for-each loop because you can't delete an object while it is being used by the loop
+		for (int i = 0; i < this.list.size(); i++) {
+			if (this.list.get(i).getTaskID() == taskID) {
+				this.list.remove(i);
 			}
 		}
 	}
@@ -61,16 +62,20 @@ class ToDoList {
 		this.list.clear();
 	}
 
+	public int getTaskNumber() {
+		return this.list.size();
+	}
+
 	public void printList(Task[] tasks) {
 		System.out.println("-------------------------");
 		for (Task task : tasks) {
-			System.out.println(task.toString());
+			task.printTask();
 		}
 		System.out.println("-------------------------");
 	}
 
 	public static void displayMenu() {
-		System.out.println("####################");
+		System.out.println("\n####################");
 		System.out.println("1: Add 	a task");
 		System.out.println("2: List all tasks");
 		System.out.println("3: Delete a task");
@@ -83,27 +88,71 @@ class ToDoList {
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 
+		//Defines the To-Do List instance
+		ToDoList toDoList = new ToDoList();
+
+		toDoList.addTask(new Task(new Time(15, 30), new Date(15, 12, 1999), "Finish assignment", "Home", toDoList.getTaskNumber() + 1));
+		toDoList.addTask(new Task(new Time(5, 45), new Date(18, 12, 1999), "Do exam", "UOW", toDoList.getTaskNumber() + 1));
+		toDoList.addTask(new Task(new Time(1, 30), new Date(8, 3, 2000), "Dab then yeet", "Swagcity", toDoList.getTaskNumber() + 1));
+
 		//Defines a variable that keeps the loop going until user exits
 		boolean running = true;
+		//Main loop runs until user exists
 		while (running) {
+			//Displays the menu, and then switches the number to user inputs to choose which action to do
 			displayMenu();
 			int choice = in.nextInt();
 			switch (choice) {
 				case 1:
-					//Add task
+					//Add a task
+					//in.nextLine() for this case, and all cases after this, is used to clear the buffer of the scanner
+					in.nextLine();
+					System.out.print("Please input the new task title: ");
+					String taskTitle = in.nextLine();
+					System.out.print("Please input the new task date (dd mm yyyy): ");
+					int taskDay = in.nextInt();
+					int taskMonth = in.nextInt();
+					int taskYear = in.nextInt();
+					in.nextLine();
+					System.out.print("Please input the starting time (hh mm): ");
+					int taskHour = in.nextInt();
+					int taskMin = in.nextInt();
+					in.nextLine();
+					System.out.print("Please input the location: ");
+					String taskLocation = in.nextLine();
+
+					//Creates a new task using all the values that were input by the user, and the To-Do List's task number to get the task ID
+					Task newTask = new Task(new Time(taskHour, taskMin), new Date(taskDay, taskMonth, taskYear), taskTitle, taskLocation, toDoList.getTaskNumber() + 1);
+					//Adds the new task to the list
+					toDoList.addTask(newTask);
+
+					//Display the sorted tasks
+					System.out.printf("Task %d is added. The To-Do list is as follows:\n", newTask.getTaskID());
+					toDoList.printList(toDoList.getSortedList());
+
 					break;
 
 				case 2:
 					//List all tasks
+					toDoList.printList(toDoList.getSortedList());
 					break;
 
 				case 3:
 					//Delete a task
+					toDoList.printList(toDoList.getSortedList());
+					in.nextLine();
+					System.out.print("Please input the task ID to be deleted: ");
+					int taskID = in.nextInt();
+					toDoList.deleteTask(taskID);
+					System.out.printf("\nTask %d is deleted. The To-Do list is as follow:\n", taskID);
+					toDoList.printList(toDoList.getSortedList());
 					break;
 
 				case 4:
 					//Delete all tasks
-
+					toDoList.deleteAllTasks();
+					System.out.println("All tasks deleted. The list is empty");
+					break;
 				case 5:
 					//Exit program
 					System.out.println("Thank you for using my To-Do List program, Goodbye!");
@@ -291,7 +340,7 @@ class Task {
 
 	//Prints out the current task in the format of “* Task ID: title, dd/mm/yyyy, hh:mm, location”
 	public void printTask() {
-		System.out.printf("* Task %d: %s, %s, %s, %s", this.taskID, this.title, this.date.toString(), this.time.toString(), this.location);
+		System.out.printf("* Task %d: %s, %s, %s, %s\n", this.taskID, this.title, this.date.toString(), this.time.toString(), this.location);
 	}
 
 	//Returns true if this task is earlier than task provided as parameter.
