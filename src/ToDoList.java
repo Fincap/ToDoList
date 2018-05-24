@@ -27,12 +27,12 @@ class ToDoList {
 			sortedList[i] = this.list.get(i);
 		}
 
-		//Perform a bubble sort of the new 1-D list TODO bubble fix
+		//Perform a bubble sort of the new 1-D list
 		Task temp;
 		for (int i = 0; i < sortedList.length; i++) {
 			for (int j = 1; j < (sortedList.length - i); j++) {
 
-				if (sortedList[j - 1].isEarlier(sortedList[j])) {
+				if (sortedList[j].isEarlier(sortedList[j - 1])) {
 					temp = sortedList[j - 1];
 					sortedList[j - 1] = sortedList[j];
 					sortedList[j] = temp;
@@ -91,9 +91,12 @@ class ToDoList {
 		//Defines the To-Do List instance
 		ToDoList toDoList = new ToDoList();
 
-		toDoList.addTask(new Task(new Time(15, 30), new Date(15, 12, 1999), "Finish assignment", "Home", toDoList.getTaskNumber() + 1));
-		toDoList.addTask(new Task(new Time(5, 45), new Date(18, 12, 1999), "Do exam", "UOW", toDoList.getTaskNumber() + 1));
-		toDoList.addTask(new Task(new Time(1, 30), new Date(8, 3, 2000), "Dab then yeet", "Swagcity", toDoList.getTaskNumber() + 1));
+		Task task1 = new Task(new Time(15, 30), new Date(15, 12, 1999), "Finish assignment", "Home", toDoList.getTaskNumber() + 1);
+		toDoList.addTask(task1);
+		Task task2 = new Task(new Time(5, 45), new Date(16, 12, 1999), "Do exam", "UOW", toDoList.getTaskNumber() + 1);
+		toDoList.addTask(task2);
+		Task task3 = new Task(new Time(1, 30), new Date(8, 3, 2000), "Dab then yeet", "Swagcity", toDoList.getTaskNumber() + 1);
+		toDoList.addTask(task3);
 
 		//Defines a variable that keeps the loop going until user exits
 		boolean running = true;
@@ -213,18 +216,30 @@ class Date {
 
 	//Returns whether this date is earlier than another date provided as parameter. If they are the same, returns false
 	public boolean isEarlier(Date date) {
-		//Checks if the other date is earlier than this one's year
-		if (date.year <= this.year) {
-			//If it is, narrow down to month
-			if (date.month <= this.month) {
-				//If it is again, narrow down to the day, then return the final result
-				if (date.day <= this.day) {
+		//If the years are the same, narrow the comparison down the months
+		if (this.year == date.year) {
+			//Repeat the same thing as years, but narrowed down for months
+			if (this.month == date.month) {
+				if (this.day == date.day) {
+					//Returns false because if they are the same date, then one is not earlier than the other
+					return false;
+				} else if (this.day < date.day) {
+					return true;
+				} else {
 					return false;
 				}
+			} else if (this.month < date.month) {
+				return true;
+			} else {
+				return false;
 			}
+		//If this year is before the other year, than it is earlier
+		} else if (this.year < date.year) {
+			return true;
+		//Otherwise, it is not earlier
+		} else {
+			return false;
 		}
-		
-		return true;
 	}
 }
 
@@ -267,15 +282,24 @@ class Time {
 
 	//Returns whether or not this time is earlier than the time provided as a parameter. Returns false if both same
 	public boolean isEarlier(Time time) {
-		//First checks if the other time's hour is earlier than this one
-		if (time.hour <= this.hour) {
-			//If it is, narrow it down to checking if the other time's min is earlier than this one
-			if (time.min <= this.min) {
+		//If they are the same hour, narrow the comparison down to the minute
+		if (this.hour == time.hour) {
+			//Exact same process, but for min
+			if (this.min == time.min) {
+				//Returns false because if they're the same time, one is not earlier than the other
+				return false;
+			} else if (this.min < time.min) {
+				return true;
+			} else {
 				return false;
 			}
+		//If this hour is less than the other hour, it is earlier, so return true
+		} else if (this.hour < time.hour) {
+			return true;
+		//Otherwise, the time isn't earlier
+		} else {
+			return false;
 		}
-		
-		return true;
 	}
 	
 }
@@ -350,7 +374,7 @@ class Task {
 			return true;
 		//However, if the dates are the same, narrow the check down to the tasks' times
 		} else if (!this.date.isEarlier(task.getDate()) && !task.getDate().isEarlier(this.date)) {
-			return this.date.isEarlier(task.date);
+			return this.time.isEarlier(task.time);
 		}
 		return false;
 	}
