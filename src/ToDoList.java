@@ -91,13 +91,6 @@ class ToDoList {
 		//Defines the To-Do List instance
 		ToDoList toDoList = new ToDoList();
 
-		Task task1 = new Task(new Time(15, 30), new Date(15, 12, 1999), "Finish assignment", "Home", toDoList.getTaskNumber() + 1);
-		toDoList.addTask(task1);
-		Task task2 = new Task(new Time(5, 45), new Date(16, 12, 1999), "Do exam", "UOW", toDoList.getTaskNumber() + 1);
-		toDoList.addTask(task2);
-		Task task3 = new Task(new Time(1, 30), new Date(8, 3, 2000), "Dab then yeet", "Swagcity", toDoList.getTaskNumber() + 1);
-		toDoList.addTask(task3);
-
 		//Defines a variable that keeps the loop going until user exits
 		boolean running = true;
 		//Main loop runs until user exists
